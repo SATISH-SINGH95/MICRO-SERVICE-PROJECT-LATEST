@@ -1,0 +1,51 @@
+
+eureka:
+  instance:
+    prefer-ip-address: true
+
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: EMPLOYEE-SERVICE
+          uri: lb://EMPLOYEE
+          predicates:
+            - Path=/employees/**
+          filters:
+            - AuthFilter
+        #          filters:
+        #            - name: CircuitBreaker
+        #              args:
+        #                name: USER-SERVICE
+        #                fallbackuri: forward:/userServiceFallBack
+
+        - id: ADDRESS-SERVICE
+          uri: lb://ADDRESS
+          predicates:
+            - Path=/addresses/**
+          filters:
+            - AuthFilter
+        #          filters:
+        #            - name: CircuitBreaker
+        #              args:
+        #              name: ADDRESS-SERVICE
+        #              fallbackuri: forward:/addressServiceFallBack
+
+        - id: AUTH-SERVICE
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth/**
+        #          filters:
+        #            - name: CircuitBreaker
+        #              args:
+        #              name: ADDRESS-SERVICE
+        #              fallbackuri: forward:/addressServiceFallBack
+
+
