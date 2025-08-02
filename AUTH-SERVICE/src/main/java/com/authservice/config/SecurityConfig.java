@@ -28,7 +28,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> {
                     req.requestMatchers("/auth/register-user", "/auth/generate-token", "/auth/validate-token/{token}").permitAll();
                     req.anyRequest().authenticated();
-                }).httpBasic(Customizer.withDefaults());
+                }).userDetailsService(userDetailsService())
+                .httpBasic(Customizer.withDefaults());
 
 
         return http.build();
@@ -39,13 +40,13 @@ public class SecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-    @Bean
-    public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService());
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
+//    @Bean
+//    public AuthenticationProvider authenticationProvider(){
+//        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+//        provider.setUserDetailsService(userDetailsService());
+//        provider.setPasswordEncoder(passwordEncoder());
+//        return provider;
+//    }
 
     @Bean
     public UserDetailsService userDetailsService(){
