@@ -30,8 +30,6 @@ public class SecurityConfig {
                     req.anyRequest().authenticated();
                 }).userDetailsService(userDetailsService())
                 .httpBasic(Customizer.withDefaults());
-
-
         return http.build();
     }
 
