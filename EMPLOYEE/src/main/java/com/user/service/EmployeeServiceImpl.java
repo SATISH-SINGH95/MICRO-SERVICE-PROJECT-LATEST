@@ -36,7 +36,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeDTO saveEmployee(EmployeeDTO employeeDTO) {
         if(employeeDTO.getId() != null) {
-            throw new BadRequestException("Employee id is required", HttpStatus.BAD_REQUEST);
+            throw new BadRequestException("Employee already exists", HttpStatus.BAD_REQUEST);
         }
         Employee employeeEntity = modelMapper.map(employeeDTO, Employee.class);
         Employee savedEmployee = employeeRepository.save(employeeEntity);
