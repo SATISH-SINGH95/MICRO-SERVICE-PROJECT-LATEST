@@ -36,9 +36,4 @@ public class UserService {
         jwtTokenResponse.setValidUntil(jwtUtil.extractExpiration(token).toString());
         return jwtTokenResponse;
     }
-
-    public void validateToken(String token){
-        jwtUtil.validateToken(token);
-
-    }
 }

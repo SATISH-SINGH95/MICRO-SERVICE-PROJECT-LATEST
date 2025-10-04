@@ -37,8 +37,4 @@ public class AuthController {
             throw new RuntimeException("Invalid username or password");
         }
     }
-    @PostMapping("/validate-token/{token}")
-    public void validateToken(@PathVariable String token) {
-        userService.validateToken(token);
-    }
 }
