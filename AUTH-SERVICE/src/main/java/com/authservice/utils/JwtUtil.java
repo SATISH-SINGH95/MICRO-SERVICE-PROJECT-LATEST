@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -29,43 +30,27 @@ public class JwtUtil {
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5))
                 .claims(claims)
-                .signWith(getKey(), SignatureAlgorithm.HS256)
+//                .signWith(getKey(), SignatureAlgorithm.HS256)
+                .signWith(getKey())
                 .compact();
     }
     private Key getKey() {
         byte[] decode = Base64.getDecoder().decode(SECRET_KEY);
-//        byte[] decode1 = Decoders.BASE64.decode(SECRET_KEY);
+        int i = decode.length * 8;
+//        return Keys.hmacShaKeyFor(decode);
+//        byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(decode);
+        /* Based on Length of this decode -> Signing Algorithm is overloaded.
+        If length is greater than 512 then it will be HmacSHA512.
+        If length is greater than 256 then it will be HmacSHA256.
+        If length is greater than 384 then it will be HmacSHA384.
+        */
     }
     private Claims getClaims(String token){
         return Jwts.parser()
                 .verifyWith((SecretKey) getKey())
                 .build().parseSignedClaims(token)
                 .getPayload();
-    }
-    public String extractUsername(String token){
-        Claims claims = getClaims(token);
-        return claims.getSubject();
-    }
-
-    public boolean isTokenNotExpired(String token){
-        Claims claims = getClaims(token);
-        Date expiration = claims.getExpiration();
-        return expiration.after(new Date());
-    }
-
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        String username = extractUsername(token);
-        if(username.equals(userDetails.getUsername()) && isTokenNotExpired(token)){
-            return true;
-        }
-        return false;
-    }
-
-    public void validateToken(String token){
-        Jwts.parser()
-                .verifyWith((SecretKey) getKey())
-                .build().parseSignedClaims(token);
     }
 
     public Date extractExpiration(String token) {
